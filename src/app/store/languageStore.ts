@@ -28,25 +28,23 @@ export const translations = {
     showNfc: 'Show NFC Logo',
     darkMode: 'Dark Mode',
     downloadButton: 'Download QR Code',
-    defaultTitle: 'Review us on Google',
+    defaultTitle: 'Rate us!',
     tapPhone: 'Tap phone',
     scanQr: 'Scan QR Code',
-    whyUse: 'Why Use Our Google Review QR Code Generator?',
-    forRestaurants: {
-      title: 'For Restaurants',
-      description:
-        'Perfect for table stands and menu displays. Encourage diners to leave reviews easily.',
-    },
-    forShops: {
-      title: 'For Retail Shops',
-      description:
-        'Display at checkout counters and reception areas. Boost your local business visibility.',
-    },
-    forServices: {
-      title: 'For Service Businesses',
-      description:
-        'Professional stands with NFC support. Make it easy for clients to share their experience.',
-    },
+    forRestaurants: 'For Restaurants',
+    forRestaurantsDesc:
+      'Perfect for table stands and menu displays. Encourage diners to leave reviews easily.',
+    forShops: 'For Retail Shops',
+    forShopsDesc:
+      'Display at checkout counters and reception areas. Boost your local business visibility.',
+    forServices: 'For Service Businesses',
+    forServicesDesc:
+      'Professional stands with NFC support. Make it easy for clients to share their experience.',
+    commercialTitle:
+      'Get Your High-Quality Google Review Stands Starting from Just 7€! ✨',
+    commercialDesc:
+      'Upgrade your business with our shining, durable, hard plastic stands, perfect for restaurants, shops, and service businesses. We offer custom QR code generation and fast delivery at an unbeatable price!',
+    contactEmail: 'aprin.farbod@digimenue.de',
   },
   de: {
     title: 'Google Bewertung QR-Code Generator',
@@ -62,24 +60,22 @@ export const translations = {
     showNfc: 'NFC-Logo anzeigen',
     darkMode: 'Dunkelmodus',
     downloadButton: 'QR-Code herunterladen',
-    defaultTitle: 'Bewerte uns auf Google',
+    defaultTitle: 'Bewerten Sie uns!',
     tapPhone: 'Telefon antippen',
     scanQr: 'QR-Code scannen',
-    whyUse: 'Warum unseren Google Bewertung QR-Code Generator nutzen?',
-    forRestaurants: {
-      title: 'Für Restaurants',
-      description:
-        'Perfekt für Tischaufsteller und Menüdisplays. Ermutigen Sie Gäste einfach Bewertungen abzugeben.',
-    },
-    forShops: {
-      title: 'Für Einzelhandel',
-      description:
-        'Zeigen Sie den Code an Kassen und Empfangsbereichen. Steigern Sie Ihre lokale Geschäftspräsenz.',
-    },
-    forServices: {
-      title: 'Für Dienstleister',
-      description:
-        'Professionelle Aufsteller mit NFC-Unterstützung. Erleichtern Sie Ihren Kunden das Teilen ihrer Erfahrungen.',
-    },
+    forRestaurants: 'Für Restaurants',
+    forRestaurantsDesc:
+      'Perfekt für Tischaufsteller und Menüdisplays. Ermutigen Sie Gäste einfach Bewertungen abzugeben.',
+    forShops: 'Für Einzelhandel',
+    forShopsDesc:
+      'Zeigen Sie den Code an Kassen und Empfangsbereichen. Steigern Sie Ihre lokale Geschäftspräsenz.',
+    forServices: 'Für Dienstleister',
+    forServicesDesc:
+      'Professionelle Aufsteller mit NFC-Unterstützung. Erleichtern Sie Ihren Kunden das Teilen ihrer Erfahrungen.',
+    commercialTitle:
+      'Sichern Sie sich Ihre hochwertigen Google-Bewertungsständer ab nur 7€! ✨',
+    commercialDesc:
+      'Werten Sie Ihr Unternehmen mit unseren glänzenden, langlebigen Hartplastikständern auf, perfekt für Restaurants, Geschäfte und Dienstleistungsunternehmen. Wir bieten individuelle QR-Code-Generierung und schnelle Lieferung zu einem unschlagbaren Preis!',
+    contactEmail: 'aprin.farbod@digimenue.de',
   },
-};
+} as const;
