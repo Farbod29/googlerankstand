@@ -1,101 +1,292 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
+import { QRCodeSVG } from 'qrcode.react';
+import Image from 'next/image';
+import html2canvas from 'html2canvas';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [url, setUrl] = useState('');
+  const [title, setTitle] = useState('');
+  const [extraText, setExtraText] = useState('');
+  const [showNfc, setShowNfc] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [urlError, setUrlError] = useState('');
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const validateUrl = (value: string) => {
+    if (!value) return false;
+    try {
+      const url = new URL(value);
+      return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  };
+
+  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setUrl(value);
+
+    if (value === '') {
+      setUrlError('');
+    } else if (!validateUrl(value)) {
+      setUrlError('Please enter a valid URL (e.g., https://example.com)');
+    } else {
+      setUrlError('');
+    }
+  };
+
+  const handleDownload = async () => {
+    if (!validateUrl(url)) {
+      setUrlError('Please enter a valid URL before downloading');
+      return;
+    }
+
+    const previewBox = document.querySelector(
+      '.download-preview'
+    ) as HTMLDivElement;
+    if (previewBox) {
+      try {
+        const canvas = await html2canvas(previewBox, {
+          backgroundColor: '#FFFFFF',
+          scale: 2, // Higher quality
+          logging: false,
+          useCORS: true, // This helps with loading images
+          allowTaint: true,
+        });
+
+        const link = document.createElement('a');
+        link.download = 'google-review-qr.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } catch (error) {
+        console.error('Error generating image:', error);
+      }
+    }
+  };
+
+  return (
+    <main
+      className={`min-h-screen ${
+        isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'
+      }`}
+    >
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Left Panel - Settings */}
+          <div className="space-y-6 p-6 rounded-lg shadow-lg bg-opacity-50 backdrop-blur-sm">
+            <div className="flex items-center gap-3 mb-6">
+              <Image
+                src="/assets/Google_Icons-09-512.webp"
+                alt="Google Logo"
+                width={40}
+                height={40}
+                className="object-contain"
+              />
+              <h2 className="text-2xl font-bold">Review Generator</h2>
+            </div>
+            {/* Title Input */}
+            <div className="space-y-2">
+              <label className="block font-medium">Title Text</label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full px-4 py-2 rounded border focus:ring-2 focus:ring-blue-500 bg-opacity-50 backdrop-blur-sm text-yellow-500 border-red-500"
+                placeholder="Enter title text"
+              />
+            </div>
+            {/* URL Input */}
+            <div className="space-y-2">
+              <label className="block font-medium">QR Code URL</label>
+              <input
+                type="url"
+                value={url}
+                onChange={handleUrlChange}
+                className={`w-full px-4 py-2 rounded border focus:ring-2 focus:ring-blue-500 bg-opacity-50 backdrop-blur-sm ${
+                  urlError ? 'border-red-500' : 'border-gray-300'
+                }`}
+                placeholder="https://example.com"
+              />
+              {urlError && (
+                <p className="text-red-500 text-sm mt-1">{urlError}</p>
+              )}
+            </div>
+
+            {/* Extra Text Input */}
+            <div className="space-y-2">
+              <label className="block font-medium">Extra Text (Optional)</label>
+              <input
+                type="text"
+                value={extraText}
+                onChange={(e) => setExtraText(e.target.value)}
+                className="w-full px-4 py-2 rounded border focus:ring-2 focus:ring-blue-500 bg-opacity-50 backdrop-blur-sm"
+                placeholder="Enter additional text"
+              />
+            </div>
+
+            {/* NFC Toggle */}
+            <div className="flex items-center space-x-3">
+              <input
+                type="checkbox"
+                id="nfc-toggle"
+                checked={showNfc}
+                onChange={(e) => setShowNfc(e.target.checked)}
+                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+              />
+              <label htmlFor="nfc-toggle" className="font-medium">
+                Show NFC Logo
+              </label>
+            </div>
+
+            {/* Theme Toggle */}
+            <div className="flex items-center space-x-3">
+              <input
+                type="checkbox"
+                id="theme-toggle"
+                checked={isDarkMode}
+                onChange={(e) => setIsDarkMode(e.target.checked)}
+                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+              />
+              <label htmlFor="theme-toggle" className="font-medium">
+                Dark Mode
+              </label>
+            </div>
+          </div>
+
+          {/* Right Panel - Preview */}
+          <div className="flex flex-col items-center justify-center p-6 rounded-lg shadow-lg bg-opacity-50 backdrop-blur-sm">
+            <div
+              className={`download-preview relative p-8 rounded-lg ${
+                isDarkMode
+                  ? 'bg-gray-900 border-white'
+                  : 'bg-white border-gray-200'
+              } max-w-sm mx-auto border shadow-sm`}
+            >
+              {/* Title */}
+              <div className="text-center mb-6">
+                <h3
+                  className={`text-xl font-bold ${
+                    isDarkMode ? 'text-white' : 'text-black'
+                  }`}
+                >
+                  {title || 'Bewerte uns!'}
+                </h3>
+              </div>
+
+              {/* QR Code Container */}
+              <div className="relative flex justify-center items-center">
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,#4285F4,#DB4437_33%,#F4B400_66%,#0F9D58_100%)] rounded-lg p-2">
+                  <div
+                    className={`w-full h-full ${
+                      isDarkMode ? 'bg-gray-900' : 'bg-white'
+                    } rounded-lg`}
+                  ></div>
+                </div>
+                <div className="relative p-4 flex justify-center items-center">
+                  <div
+                    className={`${
+                      isDarkMode ? 'bg-gray-900' : 'bg-white'
+                    } p-2 rounded-lg`}
+                  >
+                    <QRCodeSVG
+                      value={validateUrl(url) ? url : 'https://example.com'}
+                      size={160}
+                      level="H"
+                      includeMargin={true}
+                      fgColor={isDarkMode ? '#FFFFFF' : '#000000'}
+                      bgColor={isDarkMode ? '#111827' : '#FFFFFF'}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Five Stars */}
+              <div className="mt-6 flex justify-center">
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <svg
+                      key={star}
+                      className="w-6 h-6 text-yellow-400 fill-current"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z" />
+                    </svg>
+                  ))}
+                </div>
+              </div>
+
+              {/* Extra Text */}
+              {extraText && (
+                <div className="mt-3 text-center">
+                  <p
+                    className={`text-sm font-medium ${
+                      isDarkMode ? 'text-white' : 'text-black'
+                    }`}
+                  >
+                    {extraText}
+                  </p>
+                </div>
+              )}
+
+              {/* Icons and Text */}
+              <div className="mt-4 flex justify-center items-center gap-4">
+                <div className="text-center flex items-center gap-2">
+                  {showNfc && (
+                    <Image
+                      src="/assets/nfc-icon-6.png"
+                      alt="NFC Icon"
+                      width={16}
+                      height={16}
+                      className={`object-contain ${
+                        isDarkMode ? 'filter invert' : ''
+                      }`}
+                    />
+                  )}
+                  <span
+                    className={`text-sm ${
+                      isDarkMode ? 'text-white' : 'text-black'
+                    }`}
+                  >
+                    Tap phone
+                  </span>
+                </div>
+                <div className="text-center">
+                  <span
+                    className={`text-sm ${
+                      isDarkMode ? 'text-white' : 'text-black'
+                    }`}
+                  >
+                    /
+                  </span>
+                </div>
+                <div className="text-center">
+                  <span
+                    className={`text-sm ${
+                      isDarkMode ? 'text-white' : 'text-black'
+                    }`}
+                  >
+                    Scan QR Code
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Download Button */}
+            <button
+              onClick={handleDownload}
+              disabled={!validateUrl(url)}
+              className={`mt-6 px-6 py-2 text-white rounded-lg transition-colors ${
+                validateUrl(url)
+                  ? 'bg-blue-600 hover:bg-blue-700'
+                  : 'bg-gray-400 cursor-not-allowed'
+              }`}
+            >
+              Download QR Code
+            </button>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </div>
+    </main>
   );
 }
